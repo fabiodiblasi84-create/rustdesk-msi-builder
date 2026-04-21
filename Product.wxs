@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+  <Product 
+      Id="*" 
+      Name="RustDesk Custom" 
+      Language="1033" 
+      Version="1.0.0.0" 
+      Manufacturer="ODP Servizi" 
+      UpgradeCode="8F8A7C3E-9B5C-4F0C-9E4A-1C2F7A9E3B11">
+
+    <Package InstallerVersion="500" Compressed="yes" InstallScope="perMachine" />
+    <MediaTemplate />
+
+    <Directory Id="TARGETDIR" Name="SourceDir">
+
+      <!-- Program Files\RustDesk -->
+      <Directory Id="ProgramFilesFolder">
+        <Directory Id="INSTALLFOLDER" Name="RustDesk">
+          <Component Id="RustDeskInstallerComponent" Guid="C1A4E2D1-9F8B-4A7C-9C1E-8F4A2B1D9E77">
+            <File Id="RustDeskInstaller" Source="rustdesk.exe" KeyPath="yes" />
+          </Component>
+        </Directory>
+      </Directory>
+
+      <!-- ProgramData\RustDesk\config -->
+      <Directory Id="ProgramDataFolder">
+        <Directory Id="RustDeskData" Name="RustDesk">
+          <Directory Id="RustDeskConfigDir" Name="config">
+            <Component Id="RustDeskConfigComponent" Guid="A7C1F3D2-4B9E-4E1A-8C4F-2D9B7A1E5C33">
+              <File Id="RustDeskConfigFile" Source="config.toml" KeyPath="yes" />
+            </Component>
+          </Directory>
+        </Directory>
+      </Directory>
+
+    </Directory>
+
+    <Feature Id="MainFeature" Title="RustDesk Custom" Level="1">
+      <ComponentRef Id="RustDeskInstallerComponent" />
+      <ComponentRef Id="RustDeskConfigComponent" />
+    </Feature>
+
+    <!-- Esegue l’installer EXE dopo aver copiato i file -->
+    <CustomAction 
+        Id="RunRustDeskInstaller" 
+        FileKey="RustDeskInstaller" 
+        ExeCommand="" 
+        Execute="deferred" 
+        Return="check" 
+        Impersonate="no" />
+
+    <InstallExecuteSequence>
+      <CustomActionRef Id="RunRustDeskInstaller" After="InstallFiles">NOT Installed</CustomActionRef>
+    </InstallExecuteSequence>
+
+  </Product>
+</Wix>
