@@ -1,0 +1,28 @@
+name: Build RustDesk MSI
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Install WiX Toolset
+      run: |
+        choco install wixtoolset --yes
+
+    - name: Build MSI
+      run: |
+        cd src
+        candle Product.wxs
+        light Product.wixobj -o RustDesk_Custom.msi
+
+    - name: Upload MSI artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: RustDesk_Custom
+        path: src/RustDesk_Custom.msi
